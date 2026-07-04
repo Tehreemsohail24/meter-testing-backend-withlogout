@@ -1,0 +1,39 @@
+# =============================================================================
+# FILE: api/.htaccess
+# PURPOSE: Apache security hardening for the API directory.
+#          Block direct browser access to PHP source, enforce JSON-only
+#          responses, and prevent directory listing.
+# =============================================================================
+
+# Disable directory browsing
+Options -Indexes
+
+# Force all responses through PHP (no static file serving from this dir)
+Options -MultiViews
+
+# CORS headers — restrict to your actual mobile app origin in production
+<IfModule mod_headers.c>
+    # In production, replace '*' with your actual domain or use a whitelist
+    Header always set Access-Control-Allow-Origin "*"
+    Header always set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+    Header always set Access-Control-Allow-Headers "Authorization, Content-Type, X-Requested-With"
+    Header always set Access-Control-Max-Age "3600"
+
+    # Security headers
+    Header always set X-Frame-Options "DENY"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "no-referrer"
+</IfModule>
+
+# Handle OPTIONS preflight requests (CORS pre-flight from mobile app)
+RewriteEngine On
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ $1 [R=200,L]
+
+# Block direct access to core/ and config/ directories
+RewriteRule ^(core|config)/ - [F,L]
+
+# =============================================================================
+# FILE: config/.htaccess
+# Prevent web access to database credentials entirely.
+# =============================================================================

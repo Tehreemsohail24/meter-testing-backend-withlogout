@@ -1,0 +1,4 @@
+# Deny all web access to this directory.
+# Database credentials must never be served over HTTP.
+Order deny,allow
+Deny from all

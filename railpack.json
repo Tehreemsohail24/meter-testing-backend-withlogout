@@ -1,0 +1,8 @@
+{
+  "$schema": "https://schema.railpack.com",
+  "provider": "php",
+  "deploy": {
+    "startCommand": "php -S 0.0.0.0:${PORT:-8080} -t .",
+    "aptPackages": ["php8.2-mysql", "php8.2-pdo"]
+  }
+}
