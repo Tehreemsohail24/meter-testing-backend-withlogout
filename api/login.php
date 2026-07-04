@@ -1,4 +1,9 @@
 <?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 // =============================================================================
 // FILE: api/login.php
 // METHOD: POST
@@ -162,8 +167,16 @@ try {
         ],
     ]);
 
-} catch (PDOException $e) {
-    // Never expose raw PDO error messages — they can leak schema details
-    error_log('[login.php] DB Error: ' . $e->getMessage());
-    Response::error('A server error occurred. Please try again.', 500);
+} } catch (PDOException $e) {
+
+    header('Content-Type: application/json');
+    http_response_code(500);
+
+    echo json_encode([
+        "status" => "error",
+        "message" => "PDO Error",
+        "details" => $e->getMessage()
+    ], JSON_PRETTY_PRINT);
+
+    exit;
 }
